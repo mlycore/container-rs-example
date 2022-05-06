@@ -7,3 +7,6 @@ edition = "2021"
 [dependencies]
 clap = "3.1.9"
 tracing = "0.1.13"
+# serde = { version = "1.0.126", features = ["derive"] }
+serde_json = "1.0.64"
+spec = {package = "oci-spec", path = "../oci-spec"}
