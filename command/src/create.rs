@@ -15,7 +15,8 @@ use nix::{
     unistd::{Pid, sethostname, setuid, setgid, Uid, Gid, chdir, execvp},
     sched::{CloneFlags, clone},
     fcntl::{open, OFlag},
-    mount::{mount, Mode, MntFlags, MsFlags},
+    mount::{mount, MntFlags, MsFlags},
+    sys::stat::Mode,
 };
 
 pub struct CreateCommand {
