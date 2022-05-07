@@ -15,7 +15,7 @@ use nix::{
     unistd::{Pid, sethostname, setuid, setgid, Uid, Gid, chdir, execvp},
     sched::{CloneFlags, clone},
     fcntl::{open, OFlag},
-    mount::{mount, MntFlags, MsFlags},
+    mount::{mount, Mode, MntFlags, MsFlags},
 };
 
 pub struct CreateCommand {
@@ -54,9 +54,9 @@ impl CreateCommand {
     }
 }
 
-pub fn fork(spec: &Spec, namespaces: &Vec<Namespace>) -> Result<Pid, Error> {
+pub fn fork(spec: &Spec, namespaces: &Vec<Namespace>) -> Result<Pid, nix::Error> {
     const STACK_SIZE: usize = 1024 * 1024 * 4;
-    let mut stack: [u8; STACK_SIZE] = [0; STACK_SIZE];
+    let ref mut stack: [u8; STACK_SIZE] = [0; STACK_SIZE];
 
     let spec_namespaces = namespaces.into_iter().map(|ns| to_flags(ns)).reduce(|a, b| a | b);
     let clone_flags = match spec_namespaces {
@@ -134,7 +134,7 @@ fn to_flags(namespace: &Namespace) -> CloneFlags {
         "pid" => CloneFlags::CLONE_NEWPID,
         "network" => CloneFlags::CLONE_NEWNET,
         "mount" => CloneFlags::CLONE_NEWNS,
-        "ipc" => CloneFlags::CLONE::NEWIPC,
+        "ipc" => CloneFlags::CLONE_NEWIPC,
         "uts" => CloneFlags::CLONE_NEWUTS,
         "user" => CloneFlags::CLONE_NEWUSER,
         "cgroup" => CloneFlags::CLONE_NEWCGROUP,
@@ -142,7 +142,7 @@ fn to_flags(namespace: &Namespace) -> CloneFlags {
     }
 }
 
-fn mount_rootfs(rootfs: &Path) -> Result<(), Error> {
+fn mount_rootfs(rootfs: &Path) -> Result<(), nix::Error> {
     mount(
         None::<&str>,
         "/",

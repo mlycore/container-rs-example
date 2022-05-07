@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 // }
 
 // Refers to: https://github.com/opencontainers/runtime-spec/blob/main/config.md
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Spec {
     pub oci_version: String,
@@ -36,14 +36,14 @@ pub struct Spec {
     pub annotations: Option<HashMap<String, String>>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Root {
     pub path: String,
     pub readonly: Option<bool>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Mount {
     pub destination: String,
@@ -53,7 +53,7 @@ pub struct Mount {
     pub mount_type: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Process {
     pub terminal: Option<bool>,
@@ -71,14 +71,14 @@ pub struct Process {
     pub selinux_label: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ConsoleSize {
     pub height: u8,
     pub width: u8,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
     pub uid: i64,
@@ -86,7 +86,7 @@ pub struct User {
     pub additional_gids: Option<Vec<i64>>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Rlimit {
     #[serde(rename = "type")]
@@ -95,7 +95,7 @@ pub struct Rlimit {
     pub soft: i64,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Capabilities {
     pub bounding: Option<Vec<String>>,
@@ -105,7 +105,7 @@ pub struct Capabilities {
     pub ambient: Option<Vec<String>>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Hooks {
     pub prestart: Option<Vec<Hook>>,
@@ -116,7 +116,7 @@ pub struct Hooks {
     pub poststop: Option<Vec<Hook>>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Hook {
     pub path: String,
@@ -126,7 +126,7 @@ pub struct Hook {
 }
 
 // Refers to https://github.com/opencontainers/runtime-spec/blob/main/config-linux.md
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Linux {
     pub namespaces: Option<Vec<Namespace>>,
@@ -143,7 +143,7 @@ pub struct Linux {
     pub mount_label: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Resources {
     pub network: Option<Network>,
@@ -156,7 +156,7 @@ pub struct Resources {
     pub block_io: Option<BlockIo>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct DeviceResource {
     pub allow: Option<bool>,
@@ -167,7 +167,7 @@ pub struct DeviceResource {
     pub minor: Option<i64>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Namespace {
     #[serde(rename = "type")]
@@ -175,7 +175,7 @@ pub struct Namespace {
     pub path: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct UidMapping {
     #[serde(rename = "containerID")]
@@ -186,7 +186,7 @@ pub struct UidMapping {
 }
 
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Device {
     pub path: String,
@@ -199,7 +199,7 @@ pub struct Device {
     pub gid: Option<u32>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Memory {
     pub limit: Option<i64>,
@@ -213,7 +213,7 @@ pub struct Memory {
     pub disable_oomkiller: Option<bool>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Cpu {
     pub shares: Option<i64>,
@@ -225,7 +225,7 @@ pub struct Cpu {
     pub mems: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct BlockIo {
     pub weight: Option<i64>,
@@ -236,7 +236,7 @@ pub struct BlockIo {
     pub throttle_write_iopsdevice: Option<Vec<ThrottleWriteIopsdevice>>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct WeightDevice {
     pub major: i64,
@@ -245,7 +245,7 @@ pub struct WeightDevice {
     pub leaf_weight: Option<i64>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ThrottleReadBpsDevice {
     pub major: i64,
@@ -253,7 +253,7 @@ pub struct ThrottleReadBpsDevice {
     pub rate: i64,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ThrottleWriteIopsdevice {
     pub major: i64,
@@ -261,14 +261,14 @@ pub struct ThrottleWriteIopsdevice {
     pub rate: i64,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct HugepageLimit {
     pub page_size: String,
     pub limit: Option<i64>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Network {
     #[serde(rename = "classID")]
@@ -276,21 +276,21 @@ pub struct Network {
     pub priorities: Option<Vec<Priority>>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Priority {
     pub name: String,
     pub priority: i64,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Pids {
     pub limit: Option<i64>,
 }
 
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Seccomp {
     pub default_action: String,
@@ -298,7 +298,7 @@ pub struct Seccomp {
     pub syscalls: Option<Vec<Syscall>>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Syscall {
     pub names: Vec<String>,
