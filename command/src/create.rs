@@ -9,6 +9,13 @@ use std::result::Result;
 use std::path::Path;
 use std::ffi::CString;
 use spec::spec::{Spec, Namespace};
+// use crate::pty;
+use nix::{
+    sys::socket::{bind, connect, listen, socket, AddressFamily, SockAddr, SockFlag, SockType},
+    unistd::{close, read, write},
+};
+
+use super::pty::PtySocket;
 // use serde::{Deserialize, Deserialize};
 
 use nix::{
@@ -40,6 +47,18 @@ impl CreateCommand {
         // file.read_to_string(&mut config_str).unwrap();
         // config = toml::from_str(&config_str).unwrap();
 
+        let console_socket_path = format!("/tmp/container-rs/{}/container.sock", self.id);
+
+        // let pty_socket = match PtySocket::new(&console_socket_path) {
+        //     Ok(socket_fd) => Some(socket_fd),
+        //     Err(err) => {
+        //         error!("socket_fd  error: {}", err);
+        //     },
+        // };
+
+        let pty_socket = PtySocket::new(&console_socket_path);
+         
+
         file.read_to_string(&mut spec_json).unwrap();
         let spec: Spec = serde_json::from_str(&spec_json).unwrap();
         info!("spec_json: {:?}", spec);    
@@ -50,12 +69,16 @@ impl CreateCommand {
         };
 
         //TODO: consider use expect or unwrap_err
-        let pid = fork(&spec, &namespaces).unwrap();
+        let pid = fork(&spec, &namespaces, &pty_socket, &console_socket_path).unwrap();
+
+        PtySocket::connect(pty_socket.socket_fd, &console_socket_path);
+         
+
         info!("pid: {}", pid);
     }
 }
 
-pub fn fork(spec: &Spec, namespaces: &Vec<Namespace>) -> Result<Pid, nix::Error> {
+pub fn fork(spec: &Spec, namespaces: &Vec<Namespace>, pty_socket: &PtySocket, console_socket_path: &String) -> Result<Pid, nix::Error> {
     const STACK_SIZE: usize = 1024 * 1024 * 4;
     let ref mut stack: [u8; STACK_SIZE] = [0; STACK_SIZE];
 
@@ -93,6 +116,13 @@ pub fn fork(spec: &Spec, namespaces: &Vec<Namespace>) -> Result<Pid, nix::Error>
         }
 
         if let Some(process) = &spec.process {
+            let pty_socket = PtySocket::new(&console_socket_path); 
+            let sock_addr = SockAddr::new_unix(Path::new(console_socket_path)).unwrap();            
+            bind(pty_socket.socket_fd, &sock_addr);
+            listen(pty_socket.socket_fd, 10);
+            let child_socket_fd = nix::sys::socket::accept(pty_socket.socket_fd).unwrap(); 
+
+
             let cmd = &process.args.as_ref().unwrap()[0]; 
             let args: Vec<CString> = spec.process.as_ref().unwrap().args.as_ref().unwrap().iter().map(|a| CString::new(a.to_string()).unwrap_or_default()).collect();
             let exec = CString::new(cmd.as_bytes()).unwrap();
